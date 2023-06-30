@@ -1,0 +1,2 @@
+com.github.pfichtner.showcasre.mockapproval.TestMockitoApprovals$HttpClient#patch(/foo/21,{})
+com.github.pfichtner.showcasre.mockapproval.TestMockitoApprovals$HttpClient#patch(/foo/bar/42,{})
