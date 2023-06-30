@@ -1,0 +1,38 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI with Maven
+
+on:
+  schedule:
+  # each fifteen day of month
+  - cron: "0 0 15 * *"
+  push:
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java-version: [ 11 ]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK ${{ matrix.java-version }}
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ matrix.java-version }}
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent compile verify --file pom.xml
+    - name: Test Report JDK ${{ matrix.java-version }}
+      uses: dorny/test-reporter@v1
+      if: (success() || failure()) && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'  # run this step even if previous step failed
+      with:
+        name: Tests Report JDK ${{ matrix.java-version }}
+        path: "*/target/surefire-reports/*.xml"
+        reporter: java-junit
