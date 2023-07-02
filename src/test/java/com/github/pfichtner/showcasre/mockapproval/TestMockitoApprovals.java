@@ -9,6 +9,7 @@ import static java.util.UUID.randomUUID;
 import static org.approvaltests.Approvals.verify;
 import static org.mockito.Mockito.mock;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -28,34 +29,37 @@ class TestMockitoApprovals {
 		approve(httpClient);
 	}
 
+	private void someBusinessCodeThatInteractsWith1(HttpClient httpClient) {
+		httpClient.patch("/foo/21", emptyMap());
+		httpClient.patch("/foo/bar/42", Map.of("someArg", 42));
+	}
+
 	@Test
 	void verifyWithScrubbing() {
 		HttpClient httpClient = mock(HttpClient.class);
 		someBusinessCodeThatInteractsWith2(httpClient);
-		approve(httpClient, noopScrubber().then(arg2Mapper()).then(patchTimestampScrubber()));
-	}
-
-	private void someBusinessCodeThatInteractsWith1(HttpClient httpClient) {
-		httpClient.patch("/foo/21", emptyMap());
-		httpClient.patch("/foo/bar/42", emptyMap());
+		approve(httpClient, arg2Mapper().then(patchTimestampScrubber()));
 	}
 
 	private void someBusinessCodeThatInteractsWith2(HttpClient httpClient) {
-		httpClient.patch("/foo/21", Map.of("someArg", 42, "timestamp", currentTimeMillis()));
-		httpClient.patch("/foo/bar/42",
-				Map.of("someOtherArg", 84, "timestamp", currentTimeMillis(), "uuid", randomUUID()));
+		httpClient.patch("/abc", emptyMap());
+		httpClient.patch("/abc", null);
+		httpClient.patch("/abc", mapWithNullValues());
+		httpClient.patch("/x/y/z", Map.of("arg1", 84, "nestedMap", mapWithNullValues(), "timestamp",
+				currentTimeMillis(), "uuid", randomUUID()));
+	}
+
+	private Map<Object, Object> mapWithNullValues() {
+		Map<Object, Object> map = new HashMap<>();
+		map.put("a", 1);
+		map.put("b", null);
+		map.put("z", 26);
+		return map;
 	}
 
 	private InvocationScrubber patchTimestampScrubber() {
 		return mockClassScrubber(HttpClient.class).forMethodName("patch").replaceArg(1, Map.class,
 				map -> removeKeys((Map<?, ?>) map, "timestamp", "uuid"));
-	}
-
-	/**
-	 * Just to verify {@link InvocationScrubber#then(InvocationScrubber)}
-	 */
-	private InvocationScrubber noopScrubber() {
-		return p -> p;
 	}
 
 	/**

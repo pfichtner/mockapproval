@@ -1,4 +1,4 @@
 com.github.pfichtner.showcasre.mockapproval.TestMockitoApprovals$HttpClient#patch(/abc,{})
 com.github.pfichtner.showcasre.mockapproval.TestMockitoApprovals$HttpClient#patch(/abc,null)
 com.github.pfichtner.showcasre.mockapproval.TestMockitoApprovals$HttpClient#patch(/abc,{a=1, b=null, z=26})
-com.github.pfichtner.showcasre.mockapproval.TestMockitoApprovals$HttpClient#patch(/x/y/z,{nestedMap={a=1, b=null, z=26}, arg1=84})
+com.github.pfichtner.showcasre.mockapproval.TestMockitoApprovals$HttpClient#patch(/x/y/z,{arg1=84, nestedMap={a=1, b=null, z=26}})
