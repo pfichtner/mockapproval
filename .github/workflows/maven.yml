@@ -30,7 +30,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent compile verify --file pom.xml
     - name: Test Report JDK ${{ matrix.java-version }}
-      uses: dorny/test-reporter@v1
+      uses: dorny/test-reporter@v2
       if: (success() || failure()) && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'  # run this step even if previous step failed
       with:
         name: Tests Report JDK ${{ matrix.java-version }}
