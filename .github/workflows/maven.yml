@@ -34,5 +34,5 @@ jobs:
       if: (success() || failure()) && github.event_name != 'pull_request' && github.actor != 'dependabot[bot]'  # run this step even if previous step failed
       with:
         name: Tests Report JDK ${{ matrix.java-version }}
-        path: "*/target/surefire-reports/*.xml"
+        path: "**/target/surefire-reports/*.xml"
         reporter: java-junit
